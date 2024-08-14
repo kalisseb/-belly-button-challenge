@@ -15,6 +15,7 @@ function buildMetadata(sample) {
     // Use `.html("") to clear any existing metadata
     PANEL.html("");
 
+    // Use the filtered result to populate the metadata panel
     // Inside a loop, you will need to use d3 to append new
     // tags for each key-value in the filtered metadata.
     for (key in result){
@@ -40,7 +41,7 @@ function buildCharts(sample) {
     let sample_values = result.sample_values;
 
     // For the Bar Chart, map the otu_ids to a list of strings for your yticks
-    let yticks = otu_ids.map(otuID =>  `OTU ${otuID}`);
+    let yticks = otu_ids.map(otuID =>  `OTU ${otuID} `);
 
     // Build a Bar Chart
     // Don't forget to slice and reverse the input data appropriately
@@ -56,7 +57,7 @@ function buildCharts(sample) {
 
     let barLayout = {
       title: "Top 10 Bacteria Cultures Found",
-      margin: {t: 30, l: 150},
+      margin: {t: 25, l: 150},
       xaxis: {'title': "Number of Bacteria"}
     };
 
@@ -82,11 +83,10 @@ function buildCharts(sample) {
 
     let bubbleLayout = {
       title: "Bacteria Cultures per Sample",
-      margin: {t:0},
       hovermode: "closest",
       xaxis: {title: "OTU ID"},
       yaxis: {'title': "Number of Bacteria"},
-      margin: {t:30}
+      margin: {t:40}
     };
 
 
@@ -100,28 +100,35 @@ function init() {
   d3.json("https://static.bc-edx.com/data/dl-1-2/m14/lms/starter/samples.json").then((data) => {
 
     // Get the names field
-
+    let namesList = data.names;
 
     // Use d3 to select the dropdown with id of `#selDataset`
-
+    let dropDown = d3.select("#selDataset");
 
     // Use the list of sample names to populate the select options
     // Hint: Inside a loop, you will need to use d3 to append a new
     // option for each sample name.
-
+    for (let i = 0; i < namesList.Length; i++){
+      dropDown
+        .append("option")
+        .text(namesList[i])
+        .property("value", namesList[i]);
+    };
 
     // Get the first sample from the list
-
+    let firstSample = namesList[0];
 
     // Build charts and metadata panel with the first sample
-
+    buildCharts(firstSample);
+    buildMetadata(firstSample);
   });
 }
 
 // Function for event listener
 function optionChanged(newSample) {
   // Build charts and metadata panel each time a new sample is selected
-
+  buildCharts(newSample);
+  buildMetadata(newSample);
 }
 
 // Initialize the dashboard
